@@ -6,24 +6,18 @@ This is a notification service that is used to send multi channel bulk notificat
 
 ## 💬 Content
 
-<details>
-  <summary>Workflow Diagram</summary>
-  
-   <img src="./docs/notification-service.png"/>
-</details>
+### Workflow Diagram:
+<img src="./docs/notification-service.png" width="600"/>
 
-<details>
-  <summary>Technologies, Services and Libraries Used</summary>
-
-  <ul>
-    <li><b>Express</b>: Web server</li>
-    <li><b>Bull</b>: Web server</li>
-    <li><b>Axios</b>: HTTP client</li>
-    <li><b>Redis</b>: for Bull (queue management)</li>
-    <li><b>Twilio</b>: SMS service provider</li>
-    <li><b>Mailjet</b>: Email service provider</li>
-  <ul>
-</details>
+### Technologies, Services and Libraries used:
+<ul>
+  <li><b>Express</b>: Web server</li>
+  <li><b>Bull</b>: Web server</li>
+  <li><b>Axios</b>: HTTP client</li>
+  <li><b>Redis</b>: for Bull (queue management)</li>
+  <li><b>Twilio</b>: SMS service provider</li>
+  <li><b>Mailjet</b>: Email service provider</li>
+</ul>
 
 ---
 
@@ -58,6 +52,13 @@ This is a notification service that is used to send multi channel bulk notificat
 ### 2. Routinely check and send notifications:
 
 - To demonstrate this feature, a weather notification service is available, which periodically checks for notifications and sends it to all the subscribed users.
+- To start the weather notifier, set `RUN_WEATHER_NOTIFIER=true` on `.env`
+- It uses cron job to trigger periodically.
+- Trigger frequency can be modified on the `index.ts` file at `line number 8` by passing cron expressions on to the fuunction `weatherSchedule`.
+- Here are some useful cron expressions that can be used:
+  - `*/30 * * * * *` : trigger every 30 second
+  - `*/1 * * * *` : trigger every minute
+  - `*/5 * * * *` : trigger every 5 minute
     
 ### 3. Flexible to accommodate new mediums:
 
