@@ -27,6 +27,12 @@ This is a notification service that is used to send multi channel bulk notificat
 2. Install dependencies `yarn install`
 3. Run the server `yarn dev`
 4. To run unit tests, run: `yarn test`
+
+---
+
+#### ⚠️ If `.env` from the given link is used, it contains all the API keys needed to connect to the Redis Cloud Server (free trial), Twilio SMS service (free trial) and MailJet mail service (free trail). 
+#### ⚠️ Kindly change the phone and email on the user database to receive the notifications. Know More here, [User Database](https://github.com/BRoy98/StackNotifier#1-user-database).
+#### ⚠️ Check the [Routinely check and send notifications](https://github.com/BRoy98/StackNotifier#2-routinely-check-and-send-notifications) to know how to triggering the notification service.
         
 ---
     
