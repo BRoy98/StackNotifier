@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "target": "ES2021",
+    "module": "commonjs",
+    "outDir": ".build",
+    "moduleResolution": "node",
+    "lib": ["es2015"],
+    "rootDir": "./",
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@services/*": ["services/*"]
+    },
+    // "strict": true,
+    "typeRoots": ["./@types", "node_modules/@types"]
+  },
+  "exclude": ["**/node_modules"],
+  "include": ["./", "src", "src/**/*", "test", "@types"],
+  "ts-node": {
+    "files": true
+  }
+}
