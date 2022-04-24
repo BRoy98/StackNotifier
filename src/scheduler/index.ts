@@ -1,6 +1,7 @@
 import Queue from "bull";
 import Redis from "ioredis";
-import notificationWorker from "./notification-worker";
+import notificationWorker, { JobData } from "./notification-worker";
+import schedulerWorker, { SchedulerJobData } from "./scheduler-worker";
 
 var host = process.env.REDIS_HOST || "";
 var port = process.env.REDIS_PORT || "";
@@ -8,13 +9,17 @@ var password = process.env.REDIS_PASSWORD || "";
 
 var redisUrl = `redis://:${password}@${host}:${port}`;
 
+/**
+ * @class Scheduler
+ * @description Scheduler helps in scheduling notifications.
+ */
 class Scheduler {
   private client;
   private subscriber;
   private redisOpts;
 
-  private notifierQueue: Queue.Queue;
-  private schedulerQueue: Queue.Queue;
+  private notifierQueue: Queue.Queue<JobData>;
+  private schedulerQueue: Queue.Queue<SchedulerJobData>;
 
   constructor() {
     this.client = new Redis(redisUrl, {
@@ -49,16 +54,38 @@ class Scheduler {
     this.initialize();
   }
 
+  /**
+   * @description Initialize the queues
+   * @returns void
+   */
   private initialize() {
     this.notifierQueue = new Queue("notifier", this.redisOpts);
     this.notifierQueue.process(notificationWorker);
+
+    this.schedulerQueue = new Queue("scheduler", this.redisOpts);
+    this.schedulerQueue.process(schedulerWorker);
   }
 
-  sendNotification(data) {
-    this.notifierQueue.add(data);
+  /**
+   * @description Schedules notification via any of the registered services
+   * @param data notification data
+   */
+  sendNotification(data: JobData) {
+    this.notifierQueue.add(data, {
+      removeOnComplete: true,
+      attempts: 5,
+      backoff: {
+        type: "fixed",
+        delay: 3000,
+      },
+    });
   }
 
-  scheduleNotification(data) {
+  /**
+   * @description Schedules bulk notifications for any topic, via any of the registered services
+   * @param data notification data
+   */
+  scheduleNotification(data: SchedulerJobData) {
     this.schedulerQueue.add(data);
   }
 }

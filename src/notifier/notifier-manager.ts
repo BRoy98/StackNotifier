@@ -1,7 +1,8 @@
 export interface INotificationManager {
   register(service: any, config: any): NotifierManager;
+  deRegisterAll(): NotifierManager;
   services(): string[];
-  send(service: string, data: NotificationData): void;
+  send(service: string, data: NotificationData): Promise<boolean> | Error;
 }
 
 export interface NotificationData {
@@ -25,7 +26,17 @@ export class NotifierManager implements INotificationManager {
    */
   register = (handler, credentials) => {
     const { id, exec } = handler(credentials);
+
+    if (this.notifierServices[id]) {
+      throw new Error(`error.service-already-registered: ${id}`);
+    }
+
     this.notifierServices[id] = exec;
+    return this;
+  };
+
+  deRegisterAll = () => {
+    this.notifierServices = {};
     return this;
   };
 

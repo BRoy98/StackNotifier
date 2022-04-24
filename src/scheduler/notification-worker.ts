@@ -1,12 +1,17 @@
 import { DoneCallback, Job, ProcessCallbackFunction } from "bull";
 import Notifier from "../notifier";
 
-interface JobData {
-  services: string[];
+export interface JobData {
+  service: string;
   to: string;
   message: string;
 }
 
+/**
+ * @description Processes a notification job, sends notification to the recipient
+ * @param job notification job data
+ * @param done callback to be called when the job is done
+ */
 const notificationWorker: ProcessCallbackFunction<JobData> = async (
   job: Job<JobData>,
   done: DoneCallback
@@ -16,11 +21,16 @@ const notificationWorker: ProcessCallbackFunction<JobData> = async (
 
   const notifier = new Notifier();
 
-  notifier.notify(job.data.services, {
-    to: "+19403145868",
-    message: "Hello World",
+  const { service, to, message } = job.data;
+
+  const notify = await notifier.notify(service, {
+    to,
+    message,
   });
-  done();
+
+  if (!notify) throw new Error("error.notification-sending-failed");
+
+  done(null, notify);
 };
 
 export default notificationWorker;

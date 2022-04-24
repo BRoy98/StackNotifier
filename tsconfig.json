@@ -17,7 +17,10 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@services/*": ["services/*"]
+      "@services/*": ["services/*"],
+      "@data/*": ["data/*"],
+      "@src/*": ["src/*"],
+      "@schedules/*": ["schedules/*"]
     },
     // "strict": true,
     "typeRoots": ["./@types", "node_modules/@types"]

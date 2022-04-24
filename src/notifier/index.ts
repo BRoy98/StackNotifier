@@ -5,11 +5,12 @@ import {
 } from "./notifier-manager";
 
 import smsHandler from "@services/twillo-sms";
+import mailHandler from "@services/mailjet-email";
 
 interface INotifier {
   services: () => string[];
   notify: (
-    services: string[],
+    services: string,
     data: {
       to: string;
       message: string;
@@ -32,11 +33,16 @@ class Notifier implements INotifier {
   /**
    * @description Register the notification services
    */
-  initialize() {
+  private initialize() {
     this.notifierManager.register(smsHandler, {
       accountSid: process.env.TWILIO_ACCOUNT_SID,
       authToken: process.env.TWILIO_AUTH_TOKEN,
       from: process.env.TWILIO_FROM,
+    });
+
+    this.notifierManager.register(mailHandler, {
+      apiKey: process.env.MAILJET_API_KEY,
+      apiSecret: process.env.MAILJET_API_SECRET,
     });
   }
 
@@ -45,24 +51,14 @@ class Notifier implements INotifier {
    * @param services List of services to send notifications to
    * @param data Notification data
    */
-  notify = async (services: string[], data: NotificationData) => {
+  notify = async (service: string, data: NotificationData) => {
     // Check if the services are valid
-    const unregisteredServices = services.filter(
-      (service) => !this.notifierManager.services().includes(service)
-    );
-
-    if (unregisteredServices.length > 0) {
-      throw new Error(
-        `error.unregistered-services: ${unregisteredServices.join(", ")}`
-      );
+    if (!this.notifierManager.services().includes(service)) {
+      throw new Error(`error.unregistered-service: ${service}`);
     }
 
     // Send notifications to the registered services
-    const result = await Promise.all(
-      services.map((service) => this.notifierManager.send(service, data))
-    );
-
-    return result;
+    return this.notifierManager.send(service, data);
   };
 
   /**

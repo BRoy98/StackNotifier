@@ -1,14 +1,28 @@
 [
   {
-    "name": "Bishwajyoti Roy",
-    "phone": "+917278872669",
+    "name": "Test User 2",
+    "sms": "+917278872669",
     "email": "bishwajyoti456@gmail.com",
-    "subscriptions": ["weather"]
+    "subscriptions": [
+      {
+        "topic": "weather",
+        "method": "sms"
+      }
+    ]
   },
   {
-    "name": "Prabin Kumar Das",
-    "phone": "+917278872669",
+    "name": "Test User 2",
+    "sms": "+917278872669",
     "email": "mail.broy.sh@gmail.com",
-    "subscriptions": ["weather"]
+    "subscriptions": [
+      {
+        "topic": "weather",
+        "method": "email"
+      },
+      {
+        "topic": "cricket",
+        "method": "email"
+      }
+    ]
   }
 ]

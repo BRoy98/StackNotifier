@@ -4,34 +4,20 @@ import Notifier from "../notifier";
 const scheduler = new NotificationScheduler().instance;
 const notifier = new Notifier();
 
-const add = (req, res, next) => {
-  const { body } = req;
-  const { title, message, date } = body;
-
-  console.log(body);
+const sendToTopic = async (req, res, next) => {
   try {
-    scheduler.sendNotification({
-      services: ["sms"],
+    const { body } = req;
+    const { topic, messages } = body;
+    const messageData = JSON.parse(messages);
+
+    await scheduler.scheduleNotification({
+      messageData,
+      topic,
     });
-  } catch (err) {
-    console.error(`Error scheduling notification`, err.message);
-    next(err);
-  }
-};
 
-const list = (req, res, next) => {
-  try {
+    return res.send("Notification scheduled!");
   } catch (err) {
-    console.error(`Error scheduling notification`, err.message);
-    next(err);
-  }
-};
-
-const dl = async (req, res, next) => {
-  try {
-    res.json(await "");
-  } catch (err) {
-    console.error(`Error scheduling notification`, err.message);
+    console.log("error.failed-to-send-notification", err.message);
     next(err);
   }
 };
@@ -39,22 +25,22 @@ const dl = async (req, res, next) => {
 const send = async (req, res, next) => {
   try {
     const { body } = req;
-    const services = body.services.split(",");
-    const subscriptions = body.subscriptions.split(",");
-    const message = body.message;
+    const { service, to, message } = body;
 
-    const result = await notifier.notify(services, {
-      to: "+19403145868",
-      message: "Hello World",
+    const result = await notifier.notify(service, {
+      to,
+      message,
     });
 
-    console.log("result", result);
+    // console.log("result", result);
 
-    res.send("Notification scheduled!");
+    if (!result) return res.status(400).send(`Failed to send notification`);
+
+    return res.send("Notification scheduled!");
   } catch (err) {
-    console.log("error.failed-to-send-notification", err.message);
+    // console.log("error.failed-to-send-notification", err.message);
     next(err);
   }
 };
 
-export default { add, list, dl, send };
+export default { send, sendToTopic };
