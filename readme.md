@@ -112,11 +112,44 @@ for sending ad-hoc notifications
     Date: Sun, 24 Apr 2022 20:28:58 GMT
     Status: 200 OK
     Connection: close
-    Content-Type: text/html; charset=utf-8
+    Content-Type: application/json; charset=utf-8
     Content-Length: 23
     x-powered-by: Express
 
-    Notification scheduled!
+    {
+      "status": "success",
+      "message": "Notification sent!"
+    }
+    
+
+## Send bulk notification to a topic
+
+### Request
+`POST /notifier/sendToTopic`
+
+    curl -X POST \
+      'http://localhost:3030/notifier/sendToTopic' \
+      --header 'Accept: */*' \
+      --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+      --header 'Content-Type: application/x-www-form-urlencoded' \
+      --data-urlencode 'topic=weather' \
+      --data-urlencode 'messages=[{"message":"Hello World","service":"sms"},{"message":"Hello Folks, How are you doing?","service":"email"}]'
+    
+### Response
+    
+
+    HTTP/1.1 200 OK
+    Date: Sun, 24 Apr 2022 20:28:58 GMT
+    Status: 200 OK
+    Connection: close
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 56
+    x-powered-by: Express
+
+    {
+      "status": "success",
+      "message": "Notification scheduled!"
+    }
 ---
 
 Thank you for reading.
