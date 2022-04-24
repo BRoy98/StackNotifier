@@ -1,15 +1,17 @@
 # Notifiation Service
 
-This is a notification service that is used to send multi channel bulk notifications.
+This is a notification service that can send multi channel bulk notifications.
 
 ---
 
 ## 💬 Content
 
 ### Workflow Diagram:
+
 <img src="./docs/notification-service.png" width="600"/>
 
 ### Technologies, Services and Libraries used:
+
 <ul>
   <li><b>Express</b>: Web server</li>
   <li><b>Bull</b>: Web server</li>
@@ -23,24 +25,28 @@ This is a notification service that is used to send multi channel bulk notificat
 
 ## 🏃‍♂️ How to Start
 
-1. Create `.env` file and copy the content from the given link.
-2. Install dependencies `yarn install`
-3. Run the server `yarn dev`
+1. Create `.env` file on the project directory and copy the content from the given link.
+2. Install dependencies: `yarn install`
+3. Run the server: `yarn dev`
 4. To run unit tests, run: `yarn test`
+5. **Please read the next section** to know how to trigger the notifications ⬇️⬇️⬇️
+---
+
+## ⚠️ Important Notes
+
+- If `.env` file content is copied from the given link, it should contains all the **API keys** needed to connect to the **Redis Cloud Server** (free trial), **Twilio SMS service** (free trial) and **MailJet mail service** (free trail).
+- Kindly **change the phone and email** on the user database to receive the notifications. Know More here, [User Database](https://github.com/BRoy98/StackNotifier#1-user-database).
+- Check the [Routinely check and send notifications](https://github.com/BRoy98/StackNotifier#2-routinely-check-and-send-notifications) to know how to **triggering the notification service**.
 
 ---
 
-#### ⚠️ If `.env` from the given link is used, it contains all the API keys needed to connect to the Redis Cloud Server (free trial), Twilio SMS service (free trial) and MailJet mail service (free trail). 
-#### ⚠️ Kindly change the phone and email on the user database to receive the notifications. Know More here, [User Database](https://github.com/BRoy98/StackNotifier#1-user-database).
-#### ⚠️ Check the [Routinely check and send notifications](https://github.com/BRoy98/StackNotifier#2-routinely-check-and-send-notifications) to know how to triggering the notification service.
-        
----
-    
 ## 📙 Features Breaf
 
 ### 1. User Database:
+
 - A json file is considered as the users database, which can be found at `data/users.json`
 - Database structure:
+
 ```
 {
     "name": "Test User",
@@ -54,7 +60,7 @@ This is a notification service that is used to send multi channel bulk notificat
     ]
   }
 ```
-    
+
 ### 2. Routinely check and send notifications:
 
 - To demonstrate this feature, a weather notification service is available, which periodically checks for notifications and sends it to all the subscribed users.
@@ -65,7 +71,7 @@ This is a notification service that is used to send multi channel bulk notificat
   - `*/30 * * * * *` : trigger every 30 second
   - `*/1 * * * *` : trigger every minute
   - `*/5 * * * *` : trigger every 5 minute
-    
+
 ### 3. Flexible to accommodate new mediums:
 
 - SMS and Email service is implemented on the current version of the application. SMS service uses Twilio and Email service uses MailJet.
@@ -80,21 +86,28 @@ This is a notification service that is used to send multi channel bulk notificat
 
 - Bull is setup to return each notification 3 times in case of failure. In case all 3 tries are failed, it rejects the notification.
 
-### 6. Easy to test:
+### 6. Send ad-hoc notifications
+
+- Ad-hoc notifications can be sent using the REST APIs. More details about the REST APIs can be found in the [REST APIs](https://github.com/BRoy98/StackNotifier#-rest-apis) section.
+
+### 7. Easy to test:
 
 - Each part of the application is defined in a seperate module. The entire Notification Service has two main modules.
   - Notifier
   - Scheduler
-- More details about the working process of the modules can be found on the **Workflow Diagram** added at the top of the page.
+- Unit test files are available in the `test` directory. Service specific unit test files are available in their respective directories inside `services/`.
+- More details about the working process of the modules can be found on the [Workflow Diagram](https://github.com/BRoy98/StackNotifier#workflow-diagram) added at the top of the page.
 
 ---
 
 ## 💻 REST APIs
+
 for sending ad-hoc notifications
 
 ## Send a single notification
 
 ### Request
+
 `POST /notifier/send`
 
     curl -X POST \
@@ -104,9 +117,8 @@ for sending ad-hoc notifications
     --data-urlencode 'service=sms' \
     --data-urlencode 'message=Hello World' \
     --data-urlencode 'to=${your_mobile_number}'
-    
+
 ### Response
-    
 
     HTTP/1.1 200 OK
     Date: Sun, 24 Apr 2022 20:28:58 GMT
@@ -120,23 +132,21 @@ for sending ad-hoc notifications
       "status": "success",
       "message": "Notification sent!"
     }
-    
 
 ## Send bulk notification to a topic
 
 ### Request
+
 `POST /notifier/sendToTopic`
 
     curl -X POST \
       'http://localhost:3030/notifier/sendToTopic' \
       --header 'Accept: */*' \
-      --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
       --header 'Content-Type: application/x-www-form-urlencoded' \
       --data-urlencode 'topic=weather' \
       --data-urlencode 'messages=[{"message":"Hello World","service":"sms"},{"message":"Hello Folks, How are you doing?","service":"email"}]'
-    
+
 ### Response
-    
 
     HTTP/1.1 200 OK
     Date: Sun, 24 Apr 2022 20:28:58 GMT
@@ -150,6 +160,7 @@ for sending ad-hoc notifications
       "status": "success",
       "message": "Notification scheduled!"
     }
+
 ---
 
 Thank you for reading.

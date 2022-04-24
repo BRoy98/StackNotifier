@@ -16,7 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/notifier", scheduleRoute);
 
 app.use((err, req, res, next) => {
-  return res.status(400).send(err.message);
+  return res.status(400).json({
+    status: "fail",
+    message: err.message,
+  });
 });
 
 // start the server

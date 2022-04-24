@@ -1,8 +1,8 @@
 [
   {
     "name": "Test User 2",
-    "sms": "+917278872669",
-    "email": "bishwajyoti456@gmail.com",
+    "sms": "+15005550006",
+    "email": "testuser@gmail.com",
     "subscriptions": [
       {
         "topic": "weather",
@@ -12,15 +12,11 @@
   },
   {
     "name": "Test User 2",
-    "sms": "+917278872669",
-    "email": "mail.broy.sh@gmail.com",
+    "sms": "+15005550006",
+    "email": "testuser@gmail.com",
     "subscriptions": [
       {
         "topic": "weather",
-        "method": "email"
-      },
-      {
-        "topic": "cricket",
         "method": "email"
       }
     ]

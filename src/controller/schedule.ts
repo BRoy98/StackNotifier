@@ -1,10 +1,24 @@
+import express from "express";
 import NotificationScheduler from "../scheduler";
 import Notifier from "../notifier";
+import { validationResult } from "express-validator";
 
 const scheduler = new NotificationScheduler().instance;
 const notifier = new Notifier();
 
-const sendToTopic = async (req, res, next) => {
+const sendToTopic = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      status: "fail",
+      errors: errors.array(),
+    });
+  }
+
   try {
     const { body } = req;
     const { topic, messages } = body;
@@ -15,14 +29,29 @@ const sendToTopic = async (req, res, next) => {
       topic,
     });
 
-    return res.send("Notification scheduled!");
+    return res.json({
+      status: "success",
+      message: "Notification scheduled!",
+    });
   } catch (err) {
     console.log("error.failed-to-send-notification", err.message);
     next(err);
   }
 };
 
-const send = async (req, res, next) => {
+const send = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      status: "fail",
+      errors: errors.array(),
+    });
+  }
+
   try {
     const { body } = req;
     const { service, to, message } = body;
@@ -32,11 +61,16 @@ const send = async (req, res, next) => {
       message,
     });
 
-    // console.log("result", result);
+    if (!result)
+      return res.status(400).json({
+        status: "fail",
+        message: "Failed to send notification",
+      });
 
-    if (!result) return res.status(400).send(`Failed to send notification`);
-
-    return res.send("Notification scheduled!");
+    return res.json({
+      status: "success",
+      message: "Notification sent!",
+    });
   } catch (err) {
     // console.log("error.failed-to-send-notification", err.message);
     next(err);
