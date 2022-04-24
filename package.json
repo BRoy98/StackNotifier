@@ -18,8 +18,7 @@
     "ioredis": "^5.0.4",
     "node-mailjet": "^3.3.13",
     "node-schedule": "^2.1.0",
-    "twilio": "^3.76.1",
-    "uuid": "^8.3.2"
+    "twilio": "^3.76.1"
   },
   "devDependencies": {
     "@types/bull": "^3.15.8",
