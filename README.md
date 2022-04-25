@@ -1,4 +1,4 @@
-# Notifiation Service
+# Notification Service
 
 This is a notification service that can send multi channel bulk notifications.
 
