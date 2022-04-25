@@ -41,7 +41,7 @@ This is a notification service that can send multi channel bulk notifications.
 
 ---
 
-## 📙 Features Breaf
+## 📙 Features Brief
 
 ### 1. User Database:
 
@@ -136,6 +136,8 @@ for sending ad-hoc notifications
       "message": "Notification sent!"
     }
 
+<img src="./docs/rest-send.png"/>
+
 ## Send bulk notification to a topic
 
 ### Request
@@ -163,6 +165,8 @@ for sending ad-hoc notifications
       "status": "success",
       "message": "Notification scheduled!"
     }
+
+<img src="./docs/rest-send-topic.png"/>
 
 ---
 
