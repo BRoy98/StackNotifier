@@ -13,6 +13,7 @@ const getWeather = async (city) => {
 
     return Number(weather.data.current.temp_c);
   } catch (error) {
+    console.log("error.failed-to-get-weather-data", error);
     // If data not found, return 0
     return 0;
   }

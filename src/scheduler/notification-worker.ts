@@ -16,21 +16,24 @@ const notificationWorker: ProcessCallbackFunction<JobData> = async (
   job: Job<JobData>,
   done: DoneCallback
 ) => {
-  console.log(`Processing job ${job.id}`);
   console.log(`Processing Job ${job.id} | data: ${JSON.stringify(job.data)}`);
 
-  const notifier = new Notifier();
+  try {
+    const notifier = new Notifier();
 
-  const { service, to, message } = job.data;
+    const { service, to, message } = job.data;
 
-  const notify = await notifier.notify(service, {
-    to,
-    message,
-  });
+    const notify = await notifier.notify(service, {
+      to,
+      message,
+    });
 
-  if (!notify) throw new Error("error.notification-sending-failed");
+    if (!notify) done(new Error("error.notification-sending-failed"));
 
-  done(null, notify);
+    done(null, notify);
+  } catch (error) {
+    done(error);
+  }
 };
 
 export default notificationWorker;

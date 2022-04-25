@@ -21,44 +21,42 @@ const schedulerWorker: ProcessCallbackFunction<SchedulerJobData> = async (
   job: Job<SchedulerJobData>,
   done: DoneCallback
 ) => {
-  console.log(`Job Data ${JSON.stringify(job)}`);
+  console.log(`Processing Job ${job.id} | data: ${JSON.stringify(job.data)}`);
 
-  console.log("job.data", job.data);
+  try {
+    const scheduler = new Scheduler().instance;
+    const { topic, messageData } = job.data;
 
-  const scheduler = new Scheduler().instance;
-  const { topic, messageData } = job.data;
+    const filteredUsers = users
+      .filter(
+        (user) => user.subscriptions.findIndex((s) => s.topic === topic) > -1
+      )
+      .map((user) => ({
+        ...user,
+        service:
+          user.subscriptions.find((s) => s.topic === topic)?.method || "",
+      }));
 
-  const filteredUsers = users
-    .filter(
-      (user) => user.subscriptions.findIndex((s) => s.topic === topic) > -1
-    )
-    .map((user) => ({
-      ...user,
-      service: user.subscriptions.find((s) => s.topic === topic)?.method || "",
-    }));
+    filteredUsers.forEach(async (user) => {
+      console.log("Sending notification to", user);
 
-  filteredUsers.forEach(async (user) => {
-    console.log("Sending notification to", user);
+      const recipientAddress = user[user.service];
+      const message =
+        messageData.find((m) => m.service === user.service)?.message || "";
 
-    const recipientAddress = user[user.service];
-    const message =
-      messageData.find((m) => m.service === user.service)?.message || "";
+      if (!recipientAddress) {
+        console.log(
+          "error.user-contact-details-not-found-for-selected-service"
+        );
+      }
 
-    if (!recipientAddress) {
-      console.log("error.user-contact-details-not-found-for-selected-service");
-    }
-
-    scheduler.sendNotification({
-      to: recipientAddress,
-      message,
-      service: user.service,
+      scheduler.sendNotification({
+        to: recipientAddress,
+        message,
+        service: user.service,
+      });
     });
-  });
-
-  console.log(`Processing scheduler ${job.id}`);
-  console.log(
-    `Processing scheduler ${job.id} | data: ${JSON.stringify(job.data)}`
-  );
+  } catch (error) {}
 
   done();
 };

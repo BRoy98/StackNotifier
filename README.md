@@ -14,7 +14,7 @@ This is a notification service that can send multi channel bulk notifications.
 
 <ul>
   <li><b>Express</b>: Web server</li>
-  <li><b>Bull</b>: Web server</li>
+  <li><b>Bull</b>: Queue manager</li>
   <li><b>Axios</b>: HTTP client</li>
   <li><b>Redis</b>: for Bull (queue management)</li>
   <li><b>Twilio</b>: SMS service provider</li>
@@ -29,14 +29,15 @@ This is a notification service that can send multi channel bulk notifications.
 2. Install dependencies: `yarn install`
 3. Run the server: `yarn dev`
 4. To run unit tests, run: `yarn test`
-5. **Please read the next section** to know how to trigger the notifications ⬇️⬇️⬇️
+5. **Please read the next section** to know more about the service and triggers ⬇️⬇️⬇️
+
 ---
 
 ## ⚠️ Important Notes
 
 - If `.env` file content is copied from the given link, it should contains all the **API keys** needed to connect to the **Redis Cloud Server** (free trial), **Twilio SMS service** (free trial) and **MailJet mail service** (free trail).
 - Kindly **change the phone and email** on the user database to receive the notifications. Know More here, [User Database](https://github.com/BRoy98/StackNotifier#1-user-database).
-- Check the [Routinely check and send notifications](https://github.com/BRoy98/StackNotifier#2-routinely-check-and-send-notifications) to know how to **triggering the notification service**.
+- Check the [Routinely check and send notifications](https://github.com/BRoy98/StackNotifier#2-routinely-check-and-send-notifications) to know how to **periodically trigger the notification service**.
 
 ---
 
@@ -63,28 +64,30 @@ This is a notification service that can send multi channel bulk notifications.
 
 ### 2. Routinely check and send notifications:
 
-- To demonstrate this feature, a weather notification service is available, which periodically checks for notifications and sends it to all the subscribed users.
+- To demonstrate this feature, a weather notification service is available, which periodically checks for current weather temperature and sends it to all the subscribed users.
 - To start the weather notifier, set `RUN_WEATHER_NOTIFIER=true` on `.env`
-- It uses cron job to trigger periodically.
-- Trigger frequency can be modified on the `index.ts` file at `line number 8` by passing cron expressions on to the fuunction `weatherSchedule`.
+- It is a cron job which triggers the notifier periodically.
+- Trigger frequency can be modified on the `index.ts` file at `line number 8` by passing cron expressions on to the function `weatherSchedule`.
 - Here are some useful cron expressions that can be used:
   - `*/30 * * * * *` : trigger every 30 second
   - `*/1 * * * *` : trigger every minute
   - `*/5 * * * *` : trigger every 5 minute
+- Please note, very less frequency triggers can cause sending multiple sms and emails to the recipient address.
 
 ### 3. Flexible to accommodate new mediums:
 
 - SMS and Email service is implemented on the current version of the application. SMS service uses Twilio and Email service uses MailJet.
 - Services are dynamically managed by the `NotifierManager` which keeps track of all the registered notification mediums.
-- Becuase of it's plugin like strucuture, any new notification mediums can be added very easily with few lines of code.
+- Because of it's plugin like structure, any new notification mediums can be added very easily with few lines of code.
 
 ### 4. Send notification using a selected medium:
 
 - Notification sending process is managed by a Queue Manager (Bull). It helps in keeping track of all the scheduled notifications and bulk sending process.
+- Ad-hoc notification sending process is also available. Please refer to the [Send ad-hoc notifications](https://github.com/BRoy98/StackNotifier#6-send-ad-hoc-notifications) section.
 
 ### 5. Retry send a notification if failed due to some code exception:
 
-- Bull is setup to return each notification 3 times in case of failure. In case all 3 tries are failed, it rejects the notification.
+- Bull is setup to retry each notification 5 times in case of failure, in 1 seconds interval. In case all 5 tries are failed, it rejects the notification. The retry configuration is customizable.
 
 ### 6. Send ad-hoc notifications
 
@@ -92,7 +95,7 @@ This is a notification service that can send multi channel bulk notifications.
 
 ### 7. Easy to test:
 
-- Each part of the application is defined in a seperate module. The entire Notification Service has two main modules.
+- Each part of the application is defined in a separate module. The entire Notification Service has two main modules.
   - Notifier
   - Scheduler
 - Unit test files are available in the `test` directory. Service specific unit test files are available in their respective directories inside `services/`.
